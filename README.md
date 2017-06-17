@@ -1,3 +1,5 @@
-# react-markdown-highlighted
+# tarkdown-components
 
-Require babel-polyfill entry point.
+
+
+
