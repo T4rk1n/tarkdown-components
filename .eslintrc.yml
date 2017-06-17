@@ -1,0 +1,26 @@
+env:
+  browser: true
+extends: 'eslint:recommended'
+parserOptions:
+  ecmaVersion: 8
+  ecmaFeatures:
+    experimentalObjectRestSpread: true
+    jsx: true
+  sourceType: module
+plugins:
+  - react
+rules:
+  indent:
+    - error
+    - 4
+  linebreak-style:
+    - error
+    - windows
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - never
+  no-cond-assign:
+    - warn
