@@ -55,14 +55,14 @@ class HighlightManager {
      */
     loadLanguage(language) {
         if (this._loadedLanguages[language]) return
-        const url = this._langUrls
+        const url = this._langUrls[language]
         if (!url) throw new Error(`language ${language} is not valid.`)
         this._loadedLanguages[language] = { ready: false }
         loadScript(language, url, () => this._loadedLanguages[language].ready = true)
     }
 
     findAllLanguages(str) {
-        return findAllMatches(str, new RegExp(`(${this.availableLanguage.join('|')})`, 'ig'))
+        return findAllMatches(str, new RegExp(`\`\`\`(${this.availableLanguage.join('|')})`, 'ig'))
     }
 
     findAndLoadLanguages(str) {
