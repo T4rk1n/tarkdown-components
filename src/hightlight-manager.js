@@ -1,9 +1,9 @@
 /**
  * Created by T4rk on 6/15/2017.
  */
+import hljs from 'highlight.js'
 import { loadStyle, loadScript, disableStyle, setElementAttributes } from './dom-utils'
-
-import { findAllMatches } from './utils'
+import { findAllMatches, objItems } from './utils'
 
 /**
  * Manage the loading of highlight.js resources files.
@@ -15,12 +15,15 @@ class HighlightManager {
         this._styleUrls = {}
         this._langUrls = {}
         this._ready = false
+        this._hljsLoaded = false
         this.highlightVersion = null
 
         this.enableHighlightStyle = this.enableHighlightStyle.bind(this)
         this.disableHighlightStyle = this.disableHighlightStyle.bind(this)
         this.disableCurrentStyle = this.disableCurrentStyle.bind(this)
         this.loadHighlightStyle = this.loadHighlightStyle.bind(this)
+
+        this.syncLoadedLang()
         this.initCDNLinks()
     }
 
@@ -46,7 +49,11 @@ class HighlightManager {
         }
         const url = this._styleUrls[styleKey]
         this._loadedStyles[styleKey] = { disabled: false, ready: false }
-        loadStyle(styleKey, url, () => this._loadedStyles[styleKey].ready = true)
+        loadStyle(styleKey, url, () => {this._loadedStyles[styleKey].ready = true})
+    }
+
+    syncLoadedLang() {
+        hljs.listLanguages().forEach(item => this._loadedLanguages[item] = {ready: true})
     }
 
     /***
@@ -58,7 +65,9 @@ class HighlightManager {
         const url = this._langUrls[language]
         if (!url) throw new Error(`language ${language} is not valid.`)
         this._loadedLanguages[language] = { ready: false }
-        loadScript(language, url, () => this._loadedLanguages[language].ready = true)
+        loadScript(language, url, () => {
+            this._loadedLanguages[language].ready = true
+        })
     }
 
     findAllLanguages(str) {
@@ -67,6 +76,12 @@ class HighlightManager {
 
     findAndLoadLanguages(str) {
         this.findAllLanguages(str).forEach(item => this.loadLanguage(item))
+    }
+
+    loadHighlight(highlightUrl) {
+        loadScript('hljs', highlightUrl, ()=> {
+            this._hljsLoaded = true
+        })
     }
 
     /**
@@ -82,14 +97,15 @@ class HighlightManager {
             return
         }
 
-        const cdnjsAPI = 'https://api.cdnjs.com/libraries/highlight.js?fields=version,assets'
+        const cdnjsAPI = 'https://api.cdnjs.com/libraries/highlight.js?fields=version,assets,filename'
         const baseCDN ='https://cdnjs.cloudflare.com/ajax/libs/highlight.js'
         const re = /(languages|styles)\/(.*)?(\.min\.(js|css))/i
 
         //noinspection JSUnresolvedFunction
         fetch(cdnjsAPI, {mode: 'cors'}).then((value) => value.json().then(v => {
-            const { assets, version } = v
+            const { assets, version, filename } = v
             if (!this.highlightVersion) this.highlightVersion = version
+
             assets.filter(item => item.version === this.highlightVersion)[0].files.map(
                 item => re.exec(item)
             ).filter(item => item).forEach(item => {
@@ -99,15 +115,21 @@ class HighlightManager {
                     this._langUrls[key] = url
                 } else {
                     this._styleUrls[key] = url
+
                 }
             })
-            window.localStorage.setItem(
-                '_hljslinks', JSON.stringify({langUrls: this._langUrls, styleUrls: this._styleUrls}))
+            const highlightUrl = `${baseCDN}/${version}/${filename}`
+            window.localStorage.setItem('_hljslinks',
+                JSON.stringify({langUrls: this._langUrls, styleUrls: this._styleUrls, highlightUrl}))
             this._ready = true
         }))
     }
 
-    get ready() { return this._ready }
+    get ready() {
+        return this._ready &&
+            objItems(this._loadedLanguages).map(([_, v]) => v.ready).reduce((p,n)=> p && n, true) &&
+                objItems(this._loadedStyles).map(([_, v]) => v.ready).reduce((p,n)=> p && n, true)
+    }
 
     get currentlyLoadedHighlightStyles() {
         return Object.keys(this._loadedStyles).filter(k => this._loadedStyles[k].disabled)

@@ -86,20 +86,28 @@ export const promiseWrap = (func, options={rejectNull: false}) => {
     }
 }
 
+const defaultFindAllOptions = {
+    indexGet: 1, raw: false
+}
+
 /**
  * Find all matches in a string.
  * @param str {string}
  * @param re {RegExp}
+ * @param options {{}}
  * @return {Array}
  */
-export const findAllMatches = (str, re) => {
+export const findAllMatches = (str, re, options=defaultFindAllOptions) => {
+    const { indexGet, raw } = {...defaultFindAllOptions, ...options}
     const matches = []
     let m
     while (m = re.exec(str)) {
-        matches.push(m)
+        matches.push(raw ? m : m[indexGet])
     }
     return matches
 }
+
+export const objItems = (obj) => Object.keys(obj).map(k => [k, obj[k]])
 
 export default {
     mapObjReducer,

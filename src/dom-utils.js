@@ -21,7 +21,7 @@ const defaultCreateElementOptions = {
 export const createElement = (container, elementId, options=defaultCreateElementOptions) => {
     let element = document.getElementById(elementId)
     if (!element) {
-        const { elementType, attributes, innerHtml } = {...defaultCreateElementOptions, ...options}
+        const { elementType, attributes, innerHtml, onload } = {...defaultCreateElementOptions, ...options}
         element = document.createElement(elementType)
         element.id = elementId
         container.appendChild(element)
@@ -39,12 +39,14 @@ export const loadStyle = (styleId, cssFile, onload= ()=> null) => createElement(
         href: cssFile,
         media: 'all',
     },
-    elementType: 'link'
+    elementType: 'link',
+    onload
 })
 
-export const loadScript = (scriptId, src, onload= ()=> null) => createElement(getHead(), scriptId, {
+export const loadScript = (scriptId, src, onload= ()=> null) => createElement(document.querySelector('body'), scriptId, {
     elementType: 'script',
-    attributes: {src, onload}
+    attributes: {src},
+    onload
 })
 
 export const disableStyle = (styleId) => {

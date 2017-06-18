@@ -4,7 +4,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { Component, PropTypes } from 'react'
 import Remarkable from 'remarkable'
-import Highlight from 'highlight.js'
+import hljs from 'highlight.js'
 import { promiseWrap } from '../utils'
 import highlightManager from '../hightlight-manager'
 
@@ -12,7 +12,7 @@ const defaultMDProps = {
     html: false,
     xhtmlOut: false,
     breaks: false,
-    langPrefix: 'language-',
+    langPrefix: 'hljs language-',
     linkify: false,
     typographer: false,
     quotes: '“”‘’',
@@ -26,11 +26,11 @@ export default class DangerousMarkdown extends Component {
             rendered: null
         }
         this._md = new Remarkable('full', {
-            highlight: (str, lang) => lang && Highlight.getLanguage(lang) ?
+            highlight: (str, lang) => lang && hljs.getLanguage(lang) ?
                 (()=> {
-                    try{ return Highlight.highlight(lang, str).value} catch(err) { return '' }})()
+                    try{ return hljs.highlight(lang, str).value} catch(err) { return '' }})()
                 : (() => {
-                    try { return Highlight.highlightAuto(str).value } catch(err) { return ''}
+                    try { return hljs.highlightAuto(str).value } catch(err) { return ''}
                 })
         })
         this.renderMarkdown = this.renderMarkdown.bind(this)
@@ -51,12 +51,25 @@ export default class DangerousMarkdown extends Component {
 
     renderMarkdown() {
         const { mdString } = this.props
+        if (this._renderPromise) this._renderPromise.cancel()
         if (mdString) {
-            this._renderPromise = promiseWrap(() => {
-                highlightManager.findAndLoadLanguages(mdString)
+            const onComplete = (value) => this.setState({rendered:value})
+            const renderer = () => promiseWrap(()=>{
                 return this._md.render(mdString)
             })
-            this._renderPromise.promise.then((value) => this.setState({rendered:value}))
+            const resolver = () => promiseWrap(() => {
+                if (highlightManager.ready) {
+                    this._renderPromise = renderer()
+                    this._renderPromise.promise.then(onComplete)
+                } else {
+                    setTimeout(resolver, 200)
+                }
+            })
+            this._renderPromise = promiseWrap(() => {
+                highlightManager.findAndLoadLanguages(mdString)
+                resolver()
+            })
+
         }
     }
 

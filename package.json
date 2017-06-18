@@ -11,6 +11,7 @@
   "keywords": [],
   "author": "t4rk@outlook.com",
   "license": "ISC",
+  "repository": "https://github.com/T4rk1n/tarkdown-components",
   "dependencies": {
     "highlight.js": "^9.12.0",
     "react": "^15.6.1",
