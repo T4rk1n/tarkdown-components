@@ -38,39 +38,40 @@ export default class DangerousMarkdown extends Component {
     }
 
     componentWillMount() {
-        const {  html, breaks, typographer, langPrefix, linkify, quotes } = {...defaultMDProps, ...this.props}
+        const {  html, breaks, typographer, langPrefix, linkify, quotes, mdString } = {...defaultMDProps, ...this.props}
         this._md.set({
             html, breaks, typographer, langPrefix, linkify, quotes
         })
-        this.renderMarkdown()
+        this.renderMarkdown(mdString)
     }
 
     componentWillUnmount() {
         if (this._renderPromise) this._renderPromise.cancel()
     }
 
-    renderMarkdown() {
-        const { mdString } = this.props
-        if (this._renderPromise) this._renderPromise.cancel()
-        if (mdString) {
-            const onComplete = (value) => this.setState({rendered:value})
-            const renderer = () => promiseWrap(()=>{
-                return this._md.render(mdString)
-            })
-            const resolver = () => promiseWrap(() => {
-                if (highlightManager.ready) {
-                    this._renderPromise = renderer()
-                    this._renderPromise.promise.then(onComplete)
-                } else {
-                    setTimeout(resolver, 200)
-                }
-            })
-            this._renderPromise = promiseWrap(() => {
-                highlightManager.findAndLoadLanguages(mdString)
-                resolver()
-            })
+    renderMarkdown(mdString) {
+        this.setState({rendered: null}, () => {
+            if (this._renderPromise) this._renderPromise.cancel()
+            if (mdString) {
+                const onComplete = (value) => this.setState({rendered:value})
+                const renderer = () => promiseWrap(()=>{
+                    return this._md.render(mdString)
+                })
+                const resolver = () => promiseWrap(() => {
+                    if (highlightManager.ready) {
+                        this._renderPromise = renderer()
+                        this._renderPromise.promise.then(onComplete)
+                    } else {
+                        setTimeout(resolver, 200)
+                    }
+                })
+                this._renderPromise = promiseWrap(() => {
+                    highlightManager.findAndLoadLanguages(mdString)
+                    resolver()
+                })
+            }
+        })
 
-        }
     }
 
     render() {
