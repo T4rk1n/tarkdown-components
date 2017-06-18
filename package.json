@@ -8,9 +8,9 @@
     "build": "babel src --out-dir lib --source-maps",
     "watch": "babel -s inline -d lib -w src"
   },
-  "keywords": [],
+  "keywords": ["markdown", "react", "highlight", "components", "table of content"],
   "author": "t4rk@outlook.com",
-  "license": "ISC",
+  "license": "MIT",
   "repository": "https://github.com/T4rk1n/tarkdown-components",
   "dependencies": {
     "highlight.js": "^9.12.0",

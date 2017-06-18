@@ -9,7 +9,7 @@ const defaultTocBuilderOptions = {
     addId: false
 }
 
-export const parseTocDOM = (contentSelector, options=defaultTocBuilderOptions) => {
+export const parseTocDOM = (options=defaultTocBuilderOptions) => {
     const { headings, callback, addId } = {...defaultTocBuilderOptions, ...options}
     const toc = []
     let currentNode
