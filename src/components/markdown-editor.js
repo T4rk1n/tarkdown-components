@@ -6,14 +6,17 @@ import DangerousMarkdown from './dangerous-markdown'
 
 const defaultContainerStyle = {
     display: 'flex',
-
+    justifyContent: 'space-around'
 }
 
 const defaultMarkdownEditorProps = {
     containerStyleClass: 'markdown-editor',
     containerId: '',
     containerStyle: defaultContainerStyle,
-    initialText: ''
+    initialText: '',
+    cols: 80,
+    rows: 20,
+    textareaStyleClass: ''
 }
 
 export default class MarkdownEditor extends React.Component {
@@ -31,24 +34,24 @@ export default class MarkdownEditor extends React.Component {
     onChangeMdValue(event) {
         const mdValue = event.target.value
         this.setState({mdValue}, ()=> this._renderer.renderMarkdown(mdValue))
-
     }
 
     render() {
         const { mdValue } = this.state
         const {
-            containerStyleClass, containerId, containerStyle
+            containerStyleClass, containerId, containerStyle, cols, rows,
+            textareaStyle, textareaStyleClass
         } = {...defaultMarkdownEditorProps, ...this.props}
         return (
             <div className={containerStyleClass} id={containerId} style={containerStyle}>
-                <div>
-                    <textarea
-                        name="markdown-editor"
-                        id={`markdown-editor-${containerId}`}
-                        cols="30" rows="10"
-                        value={mdValue}
-                        onChange={this.onChangeMdValue}/>
-                </div>
+                <textarea
+                    name="markdown-editor"
+                    className={`${textareaStyleClass} markdown-editor`}
+                    style={textareaStyle}
+                    id={`markdown-editor-${containerId}`}
+                    cols={cols} rows={rows}
+                    value={mdValue}
+                    onChange={this.onChangeMdValue}/>
                 <DangerousMarkdown mdString={mdValue} ref={r => this._renderer = r}/>
             </div>
         )
