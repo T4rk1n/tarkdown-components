@@ -109,6 +109,10 @@ export const findAllMatches = (str, re, options=defaultFindAllOptions) => {
 
 export const objItems = (obj) => Object.keys(obj).map(k => [k, obj[k]])
 
+export const capitalize = (str) => `${str.charAt(0).toLocaleUpperCase()}${str.substr(1, str.length)}`
+
+export const formatObj = (str, obj) => Object.keys(obj).reduce((p, n) => p.replace(`{${n}}}`, obj[n]), str)
+
 export default {
     mapObjReducer,
     mapReduceToObj,
@@ -118,5 +122,8 @@ export default {
     formatStyleKey,
     resolveVariable,
     promiseWrap,
-    findAllMatches
+    findAllMatches,
+    objItems,
+    capitalize,
+    formatObj
 }

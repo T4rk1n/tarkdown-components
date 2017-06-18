@@ -5,6 +5,7 @@ import DangerousMarkdown from './components/dangerous-markdown'
 
 export DangerousMarkdown from './components/dangerous-markdown'
 export TableOfContent from './components/table-of-content'
+export HighlightStyleSelector from './components/highlight-style-selector'
 export highlightManager from './hightlight-manager'
 export * from './toc-parser'
 export * from './utils'

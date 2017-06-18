@@ -15,6 +15,7 @@ class HighlightManager {
         this._styleUrls = {}
         this._langUrls = {}
         this._ready = false
+        this._loading = false
         this._hljsLoaded = false
         this.highlightVersion = null
 
@@ -49,7 +50,9 @@ class HighlightManager {
         }
         const url = this._styleUrls[styleKey]
         this._loadedStyles[styleKey] = { disabled: false, ready: false }
-        loadStyle(styleKey, url, () => {this._loadedStyles[styleKey].ready = true})
+        loadStyle(styleKey, url, () => {
+            this._loadedStyles[styleKey].ready = true
+        })
     }
 
     syncLoadedLang() {
