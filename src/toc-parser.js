@@ -42,8 +42,8 @@ const defaultMDTocParserOptions = {
 export const parseTocMarkdown = (mdString, options=defaultMDTocParserOptions) => {
     const { callback } = {...defaultMDTocParserOptions, ...options}
     const toc = []
-    const s = mdString.replace(/```(.*\n|\r)?.*(\n|\r)?```/ig, '')
-    const re = /(#+)\s(.*)(\n|\r)/ig
+    const s = mdString.replace(/```(.+[\r\n]+)(.*[\r\n]+)+```/g, '')
+    const re = /(#+)\s(.*)([\n\r])/ig
     let m
     let i = 0
     while (m = re.exec(s)) {
