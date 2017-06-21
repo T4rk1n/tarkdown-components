@@ -15,7 +15,8 @@
   "dependencies": {
     "highlight.js": "^9.12.0",
     "react": "^15.6.1",
-    "remarkable": "^1.7.1"
+    "remarkable": "^1.7.1",
+    "tarkjs": "^1.0.0"
   },
   "devDependencies": {
     "babel-plugin-syntax-async-functions": "^6.13.0",

@@ -5,7 +5,7 @@
 import React, { Component, PropTypes } from 'react'
 import Remarkable from 'remarkable'
 import hljs from 'highlight.js'
-import { promiseWrap } from '../utils'
+import { promiseWrap } from 'tarkjs'
 import highlightManager from '../hightlight-manager'
 
 const defaultMDProps = {

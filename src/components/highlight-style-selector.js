@@ -4,7 +4,7 @@
 import React from 'react'
 import highlightManager from '../hightlight-manager'
 
-import { capitalize } from '../utils'
+import { capitalize } from 'tarkjs'
 
 const defaultStyleSelectorProps = {
     containerStyleClass: '', selectStyleClass: '', formatValue: (value) => capitalize(value),

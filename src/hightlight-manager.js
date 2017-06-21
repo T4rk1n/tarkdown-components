@@ -2,8 +2,8 @@
  * Created by T4rk on 6/15/2017.
  */
 import hljs from 'highlight.js'
-import { loadStyle, loadScript, disableStyle, setElementAttributes } from './dom-utils'
-import { findAllMatches, objItems } from './utils'
+import { loadStyle, loadScript, disableStyle, setElementAttributes } from 'tarkjs'
+import { findAllMatches, objItems } from 'tarkjs'
 
 /**
  * Manage the loading of highlight.js resources files.
@@ -74,7 +74,8 @@ class HighlightManager {
     }
 
     findAllLanguages(str) {
-        return findAllMatches(str, new RegExp(`\`\`\`(${this.availableLanguage.join('|')})`, 'ig'))
+        return findAllMatches(
+            str, new RegExp(`\`\`\`(${this.availableLanguage.join('|')})`, 'ig'), {raw: false, indexGet: 1})
     }
 
     findAndLoadLanguages(str) {
